@@ -4,7 +4,7 @@ import time
 
 class ResourceSolver():
 
-    def __init__(self, input_DF_shift_result, input_driver_hour_min, input_driver_hour_max, input_schedule_start_date, input_cluster_id, input_DF_store, path_gnu_lpk, path_coin_or):
+    def __init__(self, input_DF_shift_result, input_driver_hour_min, input_driver_hour_max, input_schedule_start_date, input_cluster_id, input_DF_store, path_gnu_lpk, path_coin_or, cluster_store_id):
         self.DF_shift_result = input_DF_shift_result[input_DF_shift_result['amount_drivers_starting_at_time_interval']!=0].reset_index(drop=True)
         self.driver_hour_min = input_driver_hour_min
         self.driver_hour_max = input_driver_hour_max
@@ -13,6 +13,7 @@ class ResourceSolver():
         self.DF_store = input_DF_store
         self.path_gnu_lpk = path_gnu_lpk
         self.path_coin_or = path_coin_or
+        self.cluster_store_id = cluster_store_id
 
         amount_drivers_shift_const = input_DF_shift_result.groupby('week_day').sum().max()[ 'amount_drivers_starting_at_time_interval']
         total_driver_time_req = (input_DF_shift_result['shift_len']*input_DF_shift_result['amount_drivers_starting_at_time_interval']).sum()
@@ -177,7 +178,10 @@ class ResourceSolver():
         if sum(DF_store_id["contains_checkers"]) >= 1:
             DF_store_id = DF_store_id[DF_store_id["contains_checkers"] == 1].reset_index(drop=True)
             DF_store_id = DF_store_id[~DF_store_id["store_description"].str.lower().str.contains('liquorshop')].reset_index(drop=True)
-            store_id = DF_store_id['store_id'].iloc[0]
+            if len(DF_store_id) > 1:
+                store_id = self.cluster_store_id
+            else:
+                store_id = DF_store_id['store_id'].iloc[0]
         else:
             DF_store_id = DF_store_id.reset_index(drop=True)
             store_id = DF_store_id['store_id'].iloc[0]

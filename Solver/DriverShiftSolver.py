@@ -4,13 +4,14 @@ from Solver.Models.ResourceVersion2 import *
 from Local.ContentManger import *
 
 class DriverShiftSolve():
-    def __init__(self, DF_schedule_input, DF_schedule_week_input, DF_driver_forecast_input, permanent_only):
+    def __init__(self, DF_schedule_input, DF_schedule_week_input, DF_driver_forecast_input, permanent_only, cluster_store):
         self.DF_schedule = DF_schedule_input
         self.DF_schedule_week = DF_schedule_week_input
         self.DF_driver_forecast = DF_driver_forecast_input
         self.LocalCon = ContentManger()
         self.APIConRTT = AppProgramingInterfaceRTT()
         self.permanent_only = permanent_only
+        self.cluster_store_id = cluster_store
         lpk_loc = os.path.dirname(os.path.realpath(__file__)).replace("\\","/").replace("Solver", "windows_glpk") + "/"
         self.glpk_loc = lpk_loc + "glpk-4.65/w64/glpsol.exe"
         coin_or_loc = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/").replace("Solver", "windows_cbc") + "/"
@@ -52,6 +53,7 @@ class DriverShiftSolve():
                                      input_driver_hour_max=week_hour_max,
                                      input_schedule_start_date=self.DF_schedule_week['start_date'][0],
                                      input_cluster_id=cluster_id,
+                                     cluster_store_id=self.cluster_store,
                                      input_DF_store=DF_store, path_gnu_lpk=self.glpk_loc, path_coin_or=self.coin_or_loc)
 
         DF_schedule = Resource.ExecuteModel()

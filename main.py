@@ -46,7 +46,8 @@ class main_solver():
         self.DF_driver_forecast, self.DF_cluster_forecast = DriverForecaster.CreateClusterForecast()
 
     def CreateDriverShift(self):
-        DriverShiftSolver = DriverShiftSolve(DF_schedule_input=self.DF_schedule, DF_schedule_week_input=self.DF_schedule_week, DF_driver_forecast_input=self.DF_cluster_forecast, permanent_only=self.permanent_only)
+        store_id = self.DF_store_forecast.iloc[0]["store_id"]
+        DriverShiftSolver = DriverShiftSolve(DF_schedule_input=self.DF_schedule, DF_schedule_week_input=self.DF_schedule_week, DF_driver_forecast_input=self.DF_cluster_forecast, permanent_only=self.permanent_only, cluster_store=store_id)
         self.DF_shift_result, self.DF_driver_schedule = DriverShiftSolver.CreateSchedule()
 
     def CreateResultReport(self, i):
@@ -185,6 +186,8 @@ ls_test = [1,2,3,4,5,6,8,9,10,11,13,14,15,16,17,18,19,23,29,30,31,32,36,37,38,41
            153,154,155,156,157,158,159,160,161,162,163,164,165,170,171,172,173,174,175,176,177,178,179,180,181,182,183,
            184,185,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,206,211,212,213,214,215,216,217,
            218,220,222,223,224,225,227,228,229,230,231,232,233,234]
+
+ls_test = [141]
 
 obj = solve_session(start_date="2022-07-18", ls_cluster_id=ls_test)
 obj.run_solver()
